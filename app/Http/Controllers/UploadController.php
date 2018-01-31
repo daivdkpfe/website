@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Ad;
 class UploadController extends Controller
 {
     //
@@ -30,10 +31,7 @@ class UploadController extends Controller
             ];
 
             //插入数据库
-            $id = DB::table('config')->insertGetId(
-                ['cf_name' => 'flash_img', 'cf_value' => $output['url']]
-            );
-
+            $id=Ad::insert('flash_img',$output['url'],'flash图片',0);
 
             $respond['data']=$output;
             return $respond;
@@ -65,12 +63,18 @@ class UploadController extends Controller
             ];
 
             //插入数据库
-            DB::transaction(function () {
+            DB::beginTransaction();
+            try{
                 DB::table('config')->where('cf_name', 'logo_img')->delete();
                 $id = DB::table('config')->insertGetId(
                     ['cf_name' => 'logo_img', 'cf_value' => $output['url']]
                 );
-            }, 5);
+                DB::commit();
+            }catch (Exception $e) {
+
+                DB::rollBack();
+            }
+
 
             $respond['data']=$output;
             return $respond;

@@ -19,6 +19,21 @@ class News
             return $list;
     }//获取新闻列表
     public static function insert($request){
+        //上传
+        $img_url=null;
+        if ($request->hasFile('news_file1') && $request->file('news_file1')->isValid()) {
+            $photo = $request->file('news_file1');
+            $extension = $photo->extension();
+            //$store_result = $photo->store('photo');
+
+            $store_result = $photo->store('public/images/news');
+            $url=asset($store_result);
+            $img_url=str_replace('/public/','/storage/',$url);
+
+        }
+
+
+
         $id = DB::table('news')->insertGetId(
             [
                 'belone_menu_uid'=>$request->input('belone_menu_uid'),
@@ -26,7 +41,7 @@ class News
                 'news_title'=>$request->input('news_title'),
                 'news_author'=>$request->input('news_author'),
                 'news_content'=>$request->input('news_content'),
-                'news_file1'=>$request->input('news_file1')
+                'news_file1'=>$img_url
             ]
         );
         return $id;

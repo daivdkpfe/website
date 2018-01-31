@@ -229,6 +229,8 @@ return [
         'Menu' => App\Menu::class,
         'News' => App\News::class,
         'Product' => App\Product::class,
+        'Ad'=>App\Ad::class,
+        'Config'=>App\Config::class,
     ],
 
 ];
